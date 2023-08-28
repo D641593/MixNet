@@ -9,7 +9,7 @@ This is the official code for MixNet: Toward Accurate Detection of Challenging S
 
 
 # Eval
-<code>
+```bash
   # Total-Text
   python3 eval_mixNet.py --net FSNet_M --scale 1 --exp_name Totaltext_mid --checkepoch 622 --test_size 640 1024 --dis_threshold 0.3 --cls_threshold 0.85 --mid True
   # CTW1500
@@ -18,4 +18,4 @@ This is the official code for MixNet: Toward Accurate Detection of Challenging S
   python3 eval_mixNet.py --net FSNet_M --scale 1 --exp_name TD500HUST_mid --checkepoch 284 --test_size 640 1024 --dis_threshold 0.3 --cls_threshold 0.85 --mid True
   # ArT
   python3 eval_mixNet.py --net FSNet_M --scale 1 --exp_name ArT_mid --checkepoch 160 --test_size 960 2880 --dis_threshold 0.4 --cls_threshold 0.8 --mid True
-</code>
+```
