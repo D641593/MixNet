@@ -28,8 +28,8 @@ class BaseOptions(object):
 
         # basic opts
         self.parser.add_argument('--exp_name', default="TD500", type=str,
-                                 choices=['Synthtext', 'Totaltext', 'Ctw1500','Icdar2015', 'Totaltext_mid', 'Ctw1500_mid','TD500HUST_mid', 'Totaltext_12','Totaltext_16','Totaltext_24','Totaltext_28','ArT_mid',
-                                          "MLT2017", 'TD500','TD500HUST', "MLT2019", "ArT", "ALL","preSynthMLT","preALL"], help='Experiment name')
+                                 choices=['Synthtext', 'Totaltext', 'Ctw1500','Icdar2015', 'Totaltext_mid', 'Ctw1500_mid','TD500HUST_mid','ArT_mid',
+                                          "MLT2017", 'TD500HUST', "MLT2019", "ArT", "ALL","preSynthMLT","preALL"], help='Experiment name')
         self.parser.add_argument('--resume', default=None, type=str, help='Path to target resume checkpoint')
         self.parser.add_argument('--num_workers', default=0, type=int, help='Number of workers used in dataloading')
         self.parser.add_argument('--cuda', default=True, type=str2bool, help='Use cuda to train model')
@@ -63,14 +63,9 @@ class BaseOptions(object):
 
         # backbone
         self.parser.add_argument('--scale', default=1, type=int, help='prediction on 1/scale feature map')
-        self.parser.add_argument('--net', default='resnet50', type=str,
-                                 choices=['vgg', 'resnet50', 'resnet18', 'resneXt50', 'resnet101',
-                                          'mixTriHRnet', 'lightmixTriHRnet', 'mixTriHRnet_cbam', 'mixTriHRnet_hor', 'mixTriHRnet_horvert', "cspmixTriHRnet", 
-                                          "defmixNet_cbam","defmixNet_ver0","defmixNet_ver1", "defmixNet_ver2","defmixNet_ver3", "defmixNet_ver4","defmixNet_dcn_cbam",
-                                          "defmixNetLDW_cbam", "FSNet_M", "FSNet_S","FSNet_Splus","FSNet_T","FSNeXt_M", "FSNeXt_S", "FSNetinter_M", "FSNetinter_S",
-                                          "deformable_resnet18", "deformable_resnet50"],
+        self.parser.add_argument('--net', default='FSNet_M', type=str,
+                                 choices=["FSNet_M", "FSNet_S","FSNet_hor"],
                                  help='Network architecture')
-        self.parser.add_argument('--pos', default=False, type=str2bool, help='concat position embeding to Transformer')
         self.parser.add_argument('--mid', default=False, type=str2bool, help='midline predict to Transformer')
         self.parser.add_argument('--embed', default=False, type=str2bool, help='predict embeding value for training')
         self.parser.add_argument('--know', default=False, type=str2bool, help='Knowledge Distillation')
