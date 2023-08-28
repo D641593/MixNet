@@ -16,8 +16,8 @@ from cfglib.option import BaseOptions
 from util.augmentation import BaseTransform
 from util.visualize import visualize_detection, visualize_gt
 from util.misc import to_device, mkdirs,rescale_result, get_cosine_map
-from util.eval import deal_eval_total_text, deal_eval_ctw1500, deal_eval_icdar15, \
-    deal_eval_TD500, data_transfer_ICDAR, data_transfer_TD500, data_transfer_TD500HUST, data_transfer_MLT2017
+# from util.eval import deal_eval_total_text, deal_eval_ctw1500, deal_eval_icdar15, \
+#     deal_eval_TD500, data_transfer_ICDAR, data_transfer_TD500, data_transfer_TD500HUST, data_transfer_MLT2017
 
 import multiprocessing
 multiprocessing.set_start_method("spawn", force=True)
@@ -185,85 +185,16 @@ def inference(model, test_loader, output_dir):
 def main(vis_dir_path):
 
     osmkdir(vis_dir_path)
-    if cfg.exp_name == "Totaltext":
+    if cfg.exp_name == "Totaltext" or cfg.exp_name == "Totaltext_mid":
         testset = TotalText(
             data_root='data/total-text-mat',
             ignore_list=None,
             is_training=False,
             transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
         )
-
-    elif cfg.exp_name == "Totaltext_mid":
-        testset = TotalText_mid(
-            data_root='data/total-text-mat',
-            ignore_list=None,
-            is_training=False,
-            transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
-        )
-    elif cfg.exp_name == 'Totaltext_12':
-        testset = TotalText(
-            data_root='data/total-text-mat',
-            ignore_list=None,
-            is_training=False,
-            transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
-        )
-        cfg.num_points = 12
-
-    elif cfg.exp_name == 'Totaltext_16':
-        testset = TotalText(
-            data_root='data/total-text-mat',
-            ignore_list=None,
-            is_training=False,
-            transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
-        )
-        cfg.num_points = 16
-
-    elif cfg.exp_name == 'Totaltext_24':
-        testset = TotalText(
-            data_root='data/total-text-mat',
-            ignore_list=None,
-            is_training=False,
-            transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
-        )
-        cfg.num_points = 24
-
-    elif cfg.exp_name == 'Totaltext_28':
-        testset = TotalText(
-            data_root='data/total-text-mat',
-            # data_root='data/overlapSet',
-            ignore_list=None,
-            is_training=False,
-            transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
-        )
-        cfg.num_points = 28
-        
-    elif cfg.exp_name == "Ctw1500":
+    elif cfg.exp_name == "Ctw1500" or cfg.exp_name == 'Ctw1500_mid':
         testset = Ctw1500Text(
             data_root='data/ctw1500',
-            is_training=False,
-            transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
-        )
-    elif cfg.exp_name == 'Ctw1500_mid':
-        testset = Ctw1500Text_mid(
-            data_root='data/ctw1500',
-            is_training=False,
-            transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
-        )
-    elif cfg.exp_name == "Icdar2015":
-        testset = Icdar15Text(
-            data_root='data/Icdar2015',
-            is_training=False,
-            transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
-        )
-    elif cfg.exp_name == "MLT2017":
-        testset = Mlt2017Text(
-            data_root='data/MLT2017',
-            is_training=False,
-            transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
-        )
-    elif cfg.exp_name == "TD500":
-        testset = TD500Text(
-            data_root='data/TD500',
             is_training=False,
             transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
         )
@@ -287,11 +218,7 @@ def main(vis_dir_path):
     test_loader = data.DataLoader(testset, batch_size=1, shuffle=False, num_workers=cfg.num_workers)
 
     # Model
-    # import torch._dynamo.config
-    # torch._dynamo.config.verbose=True
-    # torch._dynamo.config.suppress_errors = True
     model = TextNet(is_training=False, backbone=cfg.net)
-    # model = torch.compile(model, backend='inductor')
     model_path = os.path.join(cfg.save_dir, cfg.exp_name,
                               'MixNet_{}_{}.pth'.format(model.backbone_name, cfg.checkepoch))
 
@@ -303,17 +230,17 @@ def main(vis_dir_path):
         output_dir = os.path.join(cfg.output_dir, cfg.exp_name)
         inference(model, test_loader, output_dir)
 
-    if cfg.exp_name == "Totaltext" or cfg.exp_name == "Totaltext_mid":
-        pass
-        # deal_eval_total_text(debug=True)
-    elif cfg.exp_name == "Ctw1500" or cfg.exp_name == "Ctw1500_mid":
-        deal_eval_ctw1500(debug=True)
-    elif cfg.exp_name == "Icdar2015":
-        deal_eval_icdar15(debug=True)
-    elif cfg.exp_name == "TD500": #or cfg.exp_name == "TD500HUST" or cfg.exp_name == "TD500HUST_mid":
-        deal_eval_TD500(debug=True)
-    else:
-        print("{} is not justify".format(cfg.exp_name))
+    # if cfg.exp_name == "Totaltext" or cfg.exp_name == "Totaltext_mid":
+    #     pass
+    #     # deal_eval_total_text(debug=True)
+    # elif cfg.exp_name == "Ctw1500" or cfg.exp_name == "Ctw1500_mid":
+    #     deal_eval_ctw1500(debug=True)
+    # elif cfg.exp_name == "Icdar2015":
+    #     deal_eval_icdar15(debug=True)
+    # elif cfg.exp_name == "TD500": #or cfg.exp_name == "TD500HUST" or cfg.exp_name == "TD500HUST_mid":
+    #     deal_eval_TD500(debug=True)
+    # else:
+    print("{} eval finished.".format(cfg.exp_name))
 
 
 if __name__ == "__main__":

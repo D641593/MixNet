@@ -218,50 +218,6 @@ def main():
             transform=Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
         )
         valset = None
-
-    elif cfg.exp_name == 'Totaltext_12':
-        trainset = TotalText(
-            data_root='data/total-text-mat',
-            ignore_list=None,
-            is_training=True,
-            load_memory=cfg.load_memory,
-            transform=Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
-        )
-        cfg.num_points = 12
-        valset = None
-
-    elif cfg.exp_name == 'Totaltext_16':
-        trainset = TotalText(
-            data_root='data/total-text-mat',
-            ignore_list=None,
-            is_training=True,
-            load_memory=cfg.load_memory,
-            transform=Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
-        )
-        cfg.num_points = 16
-        valset = None
-
-    elif cfg.exp_name == 'Totaltext_24':
-        trainset = TotalText(
-            data_root='data/total-text-mat',
-            ignore_list=None,
-            is_training=True,
-            load_memory=cfg.load_memory,
-            transform=Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
-        )
-        cfg.num_points = 24
-        valset = None
-
-    elif cfg.exp_name == 'Totaltext_28':
-        trainset = TotalText(
-            data_root='data/total-text-mat',
-            ignore_list=None,
-            is_training=True,
-            load_memory=cfg.load_memory,
-            transform=Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
-        )
-        cfg.num_points = 28
-        valset = None
     
     elif cfg.exp_name == 'Totaltext_mid':
         trainset = TotalText_mid(
@@ -300,32 +256,6 @@ def main():
         )
         valset = None
 
-    elif cfg.exp_name == 'Icdar2015':
-        trainset = Icdar15Text(
-            data_root='data/Icdar2015',
-            is_training=True,
-            load_memory=cfg.load_memory,
-            transform=Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
-        )
-        valset = None
-    elif cfg.exp_name == 'MLT2017':
-        trainset = Mlt2017Text(
-            data_root='data/MLT2017',
-            is_training=True,
-            load_memory=cfg.load_memory,
-            transform=Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
-        )
-        valset = None
-
-    elif cfg.exp_name == 'TD500':
-        trainset = TD500Text(
-            data_root='data/TD500',
-            is_training=True,
-            load_memory=cfg.load_memory,
-            transform=Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
-        )
-        valset = None
-
     elif cfg.exp_name == 'TD500HUST':
         trainset = TD500HUSTText(
             data_root='data/',
@@ -356,15 +286,6 @@ def main():
     elif cfg.exp_name == 'ArT_mid':
         trainset = ArtTextJson_mid(
             data_root='data/ArT',
-            is_training=True,
-            load_memory=cfg.load_memory,
-            transform=Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
-        )
-        valset = None
-
-    elif cfg.exp_name == 'MLT2019':
-        trainset = Mlt2019Text(
-            data_root='data/MLT-2019',
             is_training=True,
             load_memory=cfg.load_memory,
             transform=Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
