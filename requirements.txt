@@ -1,0 +1,9 @@
+scipy
+numpy
+opencv-python==4.4.0.46
+easydict
+matplotlib
+shapely
+lxml
+tensorboardX
+tdqm
