@@ -1,20 +1,32 @@
 # MixNet
 This is the official code for MixNet: Toward Accurate Detection of Challenging Scene Text in the Wild
 
-The code is currently undergoing organization and refinement. Additional details, including the environment and weights, will be incorporated at a later stage.
+This program is not complete and may contain missing code and traces of experimentation.  I am striving to refine it to achieve a state of perfection.
+Additional details, including the environment and weights, will be incorporated at a later stage.
 
 1. code release
 2. environment
 3. weight for each benchmark
 
 # Evaluation Result on Benchmark 
-|Datasets | Prec. (%)| Recall (%) | F1-score |
+|Datasets | Prec. (%)| Recall (%) | F1-score (%) |
 |-----|--------|--------------|----------|
 |Total-Text|93.0|88.1|90.5|
-|CTW1500  |91.4|88.3|89.8|
 |MSRA-TD500|90.7|88.1|89.4|
 |ICDAR-ArT|83.0|76.7|79.7|
 
+# Evaluation Result on CTW1500
+This section elucidates the performance evaluation on the CTW1500 dataset. 
+
+When utilizing the [TIoU-metric-python3](<https://github.com/PkuDavidGuan/TIoU-metric-python3>) scoring code, our model's scores are as presented below:
+|Datasets | Prec. (%)| Recall (%) | F1-score (%) |
+|-----|--------|--------------|----------|
+|CTW1500  |90.3|84.8|87.5|
+However, upon inputting MixNet's output into the [DPText-DETR](<https://github.com/ymy-k/DPText-DETR>)'s calculation program, the ensuing results differ:
+|Datasets | Prec. (%)| Recall (%) | F1-score (%) |
+|-----|--------|--------------|----------|
+|CTW1500  |91.4|88.3|89.8|
+I'm not sure why the data is inconsistent. Therefore, I've provided the scores obtained from both calculations for reference.
 
 # Eval
 ```bash
@@ -27,3 +39,7 @@ The code is currently undergoing organization and refinement. Additional details
   # ArT
   python3 eval_mixNet.py --net FSNet_M --scale 1 --exp_name ArT_mid --checkepoch 160 --test_size 960 2880 --dis_threshold 0.4 --cls_threshold 0.8 --mid True
 ```
+# Acknowledgement
+This code has been modified based on the foundation laid by [TextBPN++](<https://github.com/GXYM/TextBPN-Plus-Plus>). 
+We use code from [Connected_components_PyTorch](<https://github.com/zsef123/Connected_components_PyTorch>) as post-processing. 
+Thanks for their great work!
