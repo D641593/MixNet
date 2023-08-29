@@ -27,6 +27,7 @@ However, upon inputting MixNet's output into the [DPText-DETR](<https://github.c
 |Datasets | Prec. (%)| Recall (%) | F1-score (%) |
 |-----|--------|--------------|----------|
 |CTW1500  |91.4|88.3|89.8|
+
 I'm not sure why the data is inconsistent. Therefore, I've provided the scores obtained from both calculations for reference.
 
 # Eval
