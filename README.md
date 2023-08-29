@@ -22,6 +22,7 @@ When utilizing the [TIoU-metric-python3](<https://github.com/PkuDavidGuan/TIoU-m
 |Datasets | Prec. (%)| Recall (%) | F1-score (%) |
 |-----|--------|--------------|----------|
 |CTW1500  |90.3|84.8|87.5|
+
 However, upon inputting MixNet's output into the [DPText-DETR](<https://github.com/ymy-k/DPText-DETR>)'s calculation program, the ensuing results differ:
 |Datasets | Prec. (%)| Recall (%) | F1-score (%) |
 |-----|--------|--------------|----------|
