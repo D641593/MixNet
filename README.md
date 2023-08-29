@@ -1,7 +1,7 @@
 # MixNet
 This is the official code for MixNet: Toward Accurate Detection of Challenging Scene Text in the Wild
 
-This program is not complete and may contain missing code and traces of experimentation.  I am striving to refine it to achieve a state of perfection.
+This project is not complete and may contain missing code and traces of experimentation.  I am striving to refine it to achieve a state of perfection.
 Additional details, including the environment and weights, will be incorporated at a later stage.
 
 1. code release
