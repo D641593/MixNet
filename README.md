@@ -1,5 +1,13 @@
 # MixNet
 This is the official code for MixNet: Toward Accurate Detection of Challenging Scene Text in the Wild
+
+The code is currently undergoing organization and refinement. Additional details, including the environment and weights, will be incorporated at a later stage.
+
+1. code release
+2. environment
+3. weight for each benchmark
+
+# Evaluation Result on Benchmark 
 |Datasets | Prec. (%)| Recall (%) | F1-score |
 |-----|--------|--------------|----------|
 |Total-Text|93.0|88.1|90.5|
