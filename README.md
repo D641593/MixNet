@@ -1,13 +1,6 @@
 # MixNet
 This is the official code for MixNet: Toward Accurate Detection of Challenging Scene Text in the Wild
 
-This project is not complete and may contain missing code and traces of experimentation.  I am striving to refine it to achieve a state of perfection.
-Additional details, including the environment and weights, will be incorporated at a later stage.
-
-1. code release
-2. environment
-3. weight for each benchmark
-
 # docker environment
 [Click Here](<https://drive.google.com/file/d/1qd7M6Zh3l0XEHAFugK_WAPMbcNe5iPMY/view?usp=sharing>)
 # Evaluation Result on Benchmark 
@@ -45,6 +38,6 @@ I'm not sure why the data is inconsistent. Therefore, I've provided the scores o
   python3 eval_mixNet.py --net FSNet_M --scale 1 --exp_name ArT_mid --checkepoch 160 --test_size 960 2880 --dis_threshold 0.4 --cls_threshold 0.8 --mid True
 ```
 # Acknowledgement
-This code has been modified based on the foundation laid by [TextBPN++](<https://github.com/GXYM/TextBPN-Plus-Plus>). 
-We use code from [Connected_components_PyTorch](<https://github.com/zsef123/Connected_components_PyTorch>) as post-processing. 
-Thanks for their great work!
+This code has been modified based on the foundation laid by [TextBPN++](<https://github.com/GXYM/TextBPN-Plus-Plus>). <br>
+We use code from [Connected_components_PyTorch](<https://github.com/zsef123/Connected_components_PyTorch>) as post-processing. <br> 
+Thanks for their great work! <br>
