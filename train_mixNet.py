@@ -10,10 +10,9 @@ import torch.utils.data as data
 from torch.optim import lr_scheduler
 from torch.utils.data import ConcatDataset
 
-from dataset import SynthText, TotalText, Ctw1500Text, Icdar15Text, LsvtTextJson,\
+from dataset import SynthText, TotalText, Ctw1500Text,\
     Mlt2017Text, TD500Text, TD500HUSTText, ArtTextJson, Mlt2019Text, TotalText_New, ArtText, MLTTextJson, TotalText_mid, Ctw1500Text_mid, TD500HUSTText_mid, ALLTextJson, ArtTextJson_mid
 from network.loss import TextLoss, knowledge_loss
-from network.loss_ctw import TextLoss_ctw
 from network.textnet import TextNet
 from util.augmentation import Augmentation
 from cfglib.config import config as cfg, update_config, print_config
