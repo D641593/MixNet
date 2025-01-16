@@ -6,10 +6,10 @@ This is the official code for MixNet: Toward Accurate Detection of Challenging S
 # Evaluation Result on Benchmark 
 |Datasets | Prec. (%)| Recall (%) | F1-score (%) | weight (.pth)
 |-----|--------|--------------|----------|-------------------|
-|Total-Text|93.0|88.1|90.5|[model](<https://drive.google.com/file/d/1TZ3mepayJZHfh9V2CffDuyXwKZPRuE8Y/view?usp=sharing>)|
-|MSRA-TD500|90.7|88.1|89.4|[model](<https://drive.google.com/file/d/1bb-0-czCxfulsz4LVnTwbDKriX-KdIrz/view?usp=sharing>)|
-|ICDAR-ArT|83.0|76.7|79.7|[model](<https://drive.google.com/file/d/1DrD5kp-jQoObfMa1pX_cebO79KCZ1uTZ/view?usp=sharing>)|
-|CTW1500  |91.4|88.3|89.8|[model](<https://drive.google.com/file/d/1V86i1vPR1l96e9GQ6eZ1CWa6mOdTET8H/view?usp=sharing>)|
+|Total-Text|93.0|88.1|90.5|[model](<https://drive.google.com/file/d/1t2LDzXsIBDIS3DAPcR5hpuOAzcN_sznB/view?usp=sharing>)|
+|MSRA-TD500|90.7|88.1|89.4|[model](<https://drive.google.com/file/d/1xba77OIDASXJYEUWDfgIPWXNG34rHN-S/view?usp=sharing>)|
+|ICDAR-ArT|83.0|76.7|79.7|[model](<https://drive.google.com/file/d/17SOTd34cLBmZCtQDrtlfBjxhbQgkA5GS/view?usp=sharing>)|
+|CTW1500  |91.4|88.3|89.8|[model](<https://drive.google.com/file/d/1QTlAYQuCBQKM-0CcXNkDKj2vJ2Hn3MZH/view?usp=sharing>)|
 
 # Evaluation Result on CTW1500
 This section elucidates the performance evaluation on the CTW1500 dataset. 
