@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/d6d7ae3e-bf2a-4b89-bbed-2d5e261994dc)# MixNet
+# MixNet
 This is the official code for MixNet: Toward Accurate Detection of Challenging Scene Text in the Wild
 
 # docker environment
