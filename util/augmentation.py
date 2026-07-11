@@ -27,7 +27,7 @@ def crop_first(image, polygons, scale =10):
     for polygon in polygons_new:
         rect = cv2.minAreaRect(polygon.points.astype(np.int32))
         box = cv2.boxPoints(rect)
-        box = np.int0(box)
+        box = np.intp(box)
         text_polys.append([box[0], box[1], box[2], box[3]])
         if polygon.label != -1:
             pos_polys.append([box[0], box[1], box[2], box[3]])
@@ -375,7 +375,7 @@ class RandomImgCropPatch(object):
     def get_contour_min_area_box(contour):
         rect = cv2.minAreaRect(contour)
         box = cv2.boxPoints(rect)
-        box = np.int0(box)
+        box = np.intp(box)
         return box
 
     def CropWH(self, image, cut_w, cut_h, polygons=None):

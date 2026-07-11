@@ -12,16 +12,19 @@ from torch.utils.data import ConcatDataset
 
 from dataset import SynthText, TotalText, Ctw1500Text,\
     Mlt2017Text, TD500Text, TD500HUSTText, ArtTextJson, Mlt2019Text, TotalText_New, ArtText, MLTTextJson, TotalText_mid, Ctw1500Text_mid, TD500HUSTText_mid, ALLTextJson, ArtTextJson_mid
+from dataset.Custom_Text_mid import CustomText_mid
 from network.loss import TextLoss, knowledge_loss
 from network.textnet import TextNet
-from util.augmentation import Augmentation
+from util.augmentation import Augmentation, BaseTransform
 from cfglib.config import config as cfg, update_config, print_config
 from util.misc import AverageMeter
-from util.misc import mkdirs, to_device
+from util.misc import mkdirs, to_device, rescale_result
 from cfglib.option import BaseOptions
 from util.visualize import visualize_network_output
 from util.summary import LogSummary
 from util.shedule import FixLR
+import cv2
+from shapely.geometry import Polygon
 # import multiprocessing
 # multiprocessing.set_start_method("spawn", force=True)
 
@@ -55,6 +58,100 @@ def load_model(model, model_path):
         print("Missing key in state_dict, try to load with strict = False")
         model.load_state_dict(state_dict['model'], strict = False)
         print(e)
+
+def polygon_iou(poly1, poly2):
+    """IoU between two polygons (Nx2 point arrays), robust to self-intersecting
+    contours (which sometimes come out of the network / raw annotations)."""
+    p1 = Polygon(poly1)
+    p2 = Polygon(poly2)
+    if not p1.is_valid:
+        p1 = p1.buffer(0)
+    if not p2.is_valid:
+        p2 = p2.buffer(0)
+    if p1.is_empty or p2.is_empty:
+        return 0.0
+    inter = p1.intersection(p2).area
+    union = p1.union(p2).area
+    return inter / union if union > 0 else 0.0
+
+
+@torch.no_grad()
+def validate(model, val_loader, iou_thresh=0.5):
+    """Lightweight periodic validation: greedy IoU@iou_thresh matching between
+    predicted and ground-truth polygons -> precision / recall / F1.
+
+    NOTE: this is a simplified proxy metric for monitoring training progress,
+    not a reimplementation of the official per-dataset benchmark protocols
+    (DetEval / TIoU / ...) used in util/eval.py. Use it to see whether the
+    model is trending in the right direction between checkpoints; for a
+    rigorous final number, run eval_mixNet.py's dataset-specific evaluator.
+    """
+    was_training = model.training
+    model.eval()
+
+    total_gt, total_pred, total_matched = 0, 0, 0
+
+    for image, meta in val_loader:
+        image = image.to(cfg.device, non_blocking=True)
+        H, W = meta['Height'][0].item(), meta['Width'][0].item()
+
+        output_dict = model({'img': image})
+        contours = output_dict["py_preds"][-1].int().cpu().numpy()
+
+        img_show = image[0].permute(1, 2, 0).cpu().numpy()
+        img_show = ((img_show * cfg.stds + cfg.means) * 255).astype(np.uint8)
+        # dataset.get_test_data() (dataset/dataload_midline.py) captures H/W
+        # BEFORE resizing, but stores polygon points AFTER resizing -- so
+        # meta['annotation'] is in resized-network-input coordinates while
+        # meta['Height']/['Width'] are original-image dimensions. Compute
+        # the same scale factors rescale_result() uses for predictions and
+        # apply them to GT too, so both end up in original-image space.
+        resized_h, resized_w = img_show.shape[:2]
+        scale_x = W / resized_w
+        scale_y = H / resized_h
+
+        _, pred_polys = rescale_result(img_show, contours, H, W)
+        pred_polys = [p for p in pred_polys if cv2.contourArea(p) > 0]
+
+        label_tag = meta['label_tag'][0].int().cpu().numpy()
+        gt_polys = []
+        for annot, n_annot, tag in zip(meta['annotation'][0], meta['n_annotation'][0], label_tag):
+            if n_annot.item() > 0 and tag > 0:  # skip padding rows and "#" / ignore regions
+                gt = annot[:n_annot].cpu().numpy().astype(np.float64).copy()
+                gt[:, 0] *= scale_x
+                gt[:, 1] *= scale_y
+                gt_polys.append(gt)
+
+        matched_pred = set()
+        matched_gt = 0
+        for gt in gt_polys:
+            best_iou, best_pi = 0.0, -1
+            for pi, pred in enumerate(pred_polys):
+                if pi in matched_pred:
+                    continue
+                iou = polygon_iou(gt, pred)
+                if iou > best_iou:
+                    best_iou, best_pi = iou, pi
+            if best_iou >= iou_thresh and best_pi != -1:
+                matched_pred.add(best_pi)
+                matched_gt += 1
+
+        total_gt += len(gt_polys)
+        total_pred += len(pred_polys)
+        total_matched += matched_gt
+
+    precision = total_matched / total_pred if total_pred > 0 else 0.0
+    recall = total_matched / total_gt if total_gt > 0 else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
+
+    print('  [validate] total_pred_boxes={} total_gt_boxes={} matched={} '
+          '(cls_threshold={}, dis_threshold={})'.format(
+              total_pred, total_gt, total_matched, cfg.cls_threshold, cfg.dis_threshold))
+
+    if was_training:
+        model.train()
+    return precision, recall, f1
+
 
 def _parse_data(inputs):
     input_dict = {}
@@ -125,7 +222,7 @@ def train(model, train_loader, criterion, scheduler, optimizer, epoch):
         print("save checkpoint for pretrain weight. ")
         if epoch % cfg.save_freq == 0:
             save_model(model, epoch, scheduler.get_lr(), optimizer)
-    elif cfg.exp_name == 'MLT2019' or cfg.exp_name == 'ArT' or cfg.exp_name == 'MLT2017':
+    elif cfg.exp_name == 'MLT2019' or cfg.exp_name == 'ArT' or cfg.exp_name == 'MLT2017' or cfg.exp_name == 'Custom_mid':
         if epoch < 10 and cfg.max_epoch >= 200:
             if epoch % (2*cfg.save_freq) == 0:
                 save_model(model, epoch, scheduler.get_lr(), optimizer)
@@ -191,7 +288,7 @@ def knowledgetrain(model, knowledge, train_loader, criterion, know_criterion, sc
         print("save checkpoint for pretrain weight. ")
         if epoch % cfg.save_freq == 0:
             save_model(model, epoch, scheduler.get_lr(), optimizer)
-    elif cfg.exp_name == 'MLT2019' or cfg.exp_name == 'ArT' or cfg.exp_name == 'MLT2017':
+    elif cfg.exp_name == 'MLT2019' or cfg.exp_name == 'ArT' or cfg.exp_name == 'MLT2017' or cfg.exp_name == 'Custom_mid':
         if epoch < 10 and cfg.max_epoch >= 200:
             if epoch % (2*cfg.save_freq) == 0:
                 save_model(model, epoch, scheduler.get_lr(), optimizer)
@@ -343,6 +440,23 @@ def main():
         trainset = ConcatDataset([trainset_SynthText, trainset_SynthMLT,trainset_totaltext,trainset_TD500])
         valset = None
 
+    elif cfg.exp_name == 'Custom_mid':
+        trainset = CustomText_mid(
+            data_root='data/custom_data',
+            is_training=True,
+            load_memory=cfg.load_memory,
+            transform=Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
+        )
+        try:
+            valset = CustomText_mid(
+                data_root='data/custom_data',
+                is_training=False,
+                transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
+            )
+        except FileNotFoundError:
+            print("[Custom_mid] no val_det.txt found -- training without periodic validation.")
+            valset = None
+
     else:
         print("dataset name is not correct")
 
@@ -350,6 +464,10 @@ def main():
                                    shuffle=True, num_workers=cfg.num_workers,
                                    pin_memory=True, generator=torch.Generator(device=cfg.device)
     )
+
+    val_loader = None
+    if valset is not None:
+        val_loader = data.DataLoader(valset, batch_size=1, shuffle=False, num_workers=0)
 
     if cfg.exp_name == 'Synthtext' or cfg.exp_name == 'ALL' or cfg.exp_name == "preSynthMLT":
         print("save checkpoint for pretrain weight. ")
@@ -396,6 +514,11 @@ def main():
         else:
             train(model, train_loader, criterion, scheduler, optimizer, epoch)
 
+        if val_loader is not None and epoch % cfg.val_freq == 0:
+            precision, recall, f1 = validate(model, val_loader)
+            print('Validation @ epoch {}: precision={:.4f} recall={:.4f} f1={:.4f}'.format(
+                epoch, precision, recall, f1))
+
     print('End.')
 
     if torch.cuda.is_available():
@@ -414,4 +537,3 @@ if __name__ == "__main__":
 
     # main
     main()
-

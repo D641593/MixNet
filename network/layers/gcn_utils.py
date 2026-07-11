@@ -109,7 +109,7 @@ def get_node_feature(cnn_feature, img_poly, ind, h, w):
 
 
 def get_adj_mat(n_adj, n_nodes):
-    a = np.zeros([n_nodes, n_nodes], dtype=np.float)
+    a = np.zeros([n_nodes, n_nodes], dtype=float)
 
     for i in range(n_nodes):
         for j in range(-n_adj // 2, n_adj // 2 + 1):

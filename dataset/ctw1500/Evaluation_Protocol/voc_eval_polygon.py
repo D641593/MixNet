@@ -126,7 +126,7 @@ def voc_eval_polygon(detpath,
         # assert(R), 'Can not find any object in '+ classname+' class.'
         if not R: continue
         bbox = np.array([x['bbox'] for x in R])
-        difficult = np.array([x['difficult'] for x in R]).astype(np.bool)
+        difficult = np.array([x['difficult'] for x in R]).astype(bool)
         det = [False] * len(R)
         npos = npos + sum(~difficult)
         num_gt[str(ix)] = sum(~difficult)

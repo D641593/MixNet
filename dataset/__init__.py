@@ -19,3 +19,4 @@ from .Icdar19LSVT_Json import LsvtTextJson
 from .preSynthMLT import MLTTextJson
 from .preAll import ALLTextJson
 from .deploy import DeployDataset
+from .Custom_Text_mid import CustomText_mid

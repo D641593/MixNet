@@ -163,7 +163,7 @@ def data_transfer_ICDAR(contours):
         if min(rect[1][0], rect[1][1]) <= 5:
             continue
         points = cv2.boxPoints(rect)
-        points = np.int0(points)
+        points = np.intp(points)
         # print(points.shape)
         # points = np.reshape(points, (4, 2))
         cnts.append(points)
@@ -177,7 +177,7 @@ def data_transfer_TD500(contours, res_file, img=None):
             if min(rect[1][0], rect[1][1]) <= 5:
                 continue
             points = cv2.boxPoints(rect)
-            box = np.int0(points)
+            box = np.intp(points)
             # cv2.drawContours(img, [box], 0, (0, 255, 0), 3)
 
             cx, cy = rect[0]
@@ -211,7 +211,7 @@ def data_transfer_TD500HUST(contours, res_file, img=None):
             if min(rect[1][0], rect[1][1]) <= 5:
                 continue
             points = cv2.boxPoints(rect)
-            box = np.int0(points).reshape(-1)
+            box = np.intp(points).reshape(-1)
             f.write('{},{},{},{},{},{},{},{}\r\n'.format(
                 box[0], box[1], 
                 box[2], box[3], 
@@ -233,7 +233,7 @@ def data_transfer_MLT2017(contours, res_file):
             width = rect[1][0] - np.clip(rect[1][0] * (1-np.sqrt(solidity)), 0, 6)
             height = rect[1][1] - np.clip(rect[1][1] * (1-np.sqrt(solidity)), 0, 4)
             points = cv2.boxPoints((rect[0], (width, height), rect[2]))
-            points = np.int0(points)
+            points = np.intp(points)
             p = np.reshape(points, -1)
             f.write('{},{},{},{},{},{},{},{},{}\r\n'
                     .format(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], 1))

@@ -163,8 +163,13 @@ class TextDataset(object):
         line = LineString(midline)
         distances = np.linspace(0, line.length, target_pts)
         points = [line.interpolate(distance) for distance in distances]
-        multipoint = unary_union(points) 
-        midline = np.array(multipoint)
+        multipoint = unary_union(points)
+        # Shapely >= 2.0: geometries no longer support np.array(geom)
+        # directly; pull coordinates out explicitly instead.
+        if hasattr(multipoint, "geoms"):
+            midline = np.array([[p.x, p.y] for p in multipoint.geoms])
+        else:
+            midline = np.array([[multipoint.x, multipoint.y]])
         return midline
 
     def check_poly(self, polys):
@@ -187,17 +192,17 @@ class TextDataset(object):
         h, w = img.shape[0], img.shape[1]
         mask_zeros = np.zeros(img.shape[:2], np.uint8)
 
-        train_mask = np.ones((h, w), np.float)
+        train_mask = np.ones((h, w), float)
         tr_mask = np.zeros((h, w), np.uint8)
-        weight_matrix = np.zeros((h, w), dtype=np.float)
-        direction_field = np.zeros((2, h, w), dtype=np.float)
-        distance_field = np.zeros((h, w), np.float)
+        weight_matrix = np.zeros((h, w), dtype=float)
+        direction_field = np.zeros((2, h, w), dtype=float)
+        distance_field = np.zeros((h, w), float)
         edge_field = np.zeros((h, w), dtype=np.uint8)
 
-        gt_points = np.zeros((cfg.max_annotation, cfg.num_points, 2), dtype=np.float)
-        proposal_points = np.zeros((cfg.max_annotation, cfg.num_points, 2), dtype=np.float)
-        gt_mid_points = np.zeros((cfg.max_annotation, cfg.num_points // 2, 2), dtype=np.float)
-        ignore_tags = np.zeros((cfg.max_annotation,), dtype=np.int)
+        gt_points = np.zeros((cfg.max_annotation, cfg.num_points, 2), dtype=float)
+        proposal_points = np.zeros((cfg.max_annotation, cfg.num_points, 2), dtype=float)
+        gt_mid_points = np.zeros((cfg.max_annotation, cfg.num_points // 2, 2), dtype=float)
+        ignore_tags = np.zeros((cfg.max_annotation,), dtype=int)
 
         if polygons is None:
             return train_mask, tr_mask, \
@@ -215,7 +220,7 @@ class TextDataset(object):
                 gt_mid_points[idx, :, :] = self.get_gt_midline(polys)
             except ValueError:
                 gt_mid_points[idx, :, :] = self.get_gt_midline(gt_points[idx, :, :])
-            cv2.fillPoly(tr_mask, [polygon.points.astype(np.int)], color=(idx + 1,))
+            cv2.fillPoly(tr_mask, [polygon.points.astype(int)], color=(idx + 1,))
 
             inst_mask = mask_zeros.copy()
             cv2.fillPoly(inst_mask, [polygon.points.astype(np.int32)], color=(1,))
