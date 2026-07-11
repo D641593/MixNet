@@ -29,7 +29,7 @@ class BaseOptions(object):
         # basic opts
         self.parser.add_argument('--exp_name', default="TD500", type=str,
                                  choices=['Synthtext', 'Totaltext', 'Ctw1500','Icdar2015', 'Totaltext_mid', 'Ctw1500_mid','TD500HUST_mid','ArT_mid',
-                                          "MLT2017", 'TD500HUST', "MLT2019", "ArT", "ALL","preSynthMLT","preALL"], help='Experiment name')
+                                          "MLT2017", 'TD500HUST', "MLT2019", "ArT", "ALL","preSynthMLT","preALL", "Custom_mid"], help='Experiment name')
         self.parser.add_argument('--resume', default=None, type=str, help='Path to target resume checkpoint')
         self.parser.add_argument('--num_workers', default=0, type=int, help='Number of workers used in dataloading')
         self.parser.add_argument('--cuda', default=True, type=str2bool, help='Use cuda to train model')
@@ -59,7 +59,7 @@ class BaseOptions(object):
         self.parser.add_argument('--display_freq', default=10, type=int, help='display training metrics every # iter')
         self.parser.add_argument('--viz_freq', default=50, type=int, help='visualize training process every # iter')
         self.parser.add_argument('--log_freq', default=10000, type=int, help='log to tensorboard every # iterations')
-        self.parser.add_argument('--val_freq', default=1000, type=int, help='do validation every # iterations')
+        self.parser.add_argument('--val_freq', default=5, type=int, help='run periodic validation every # epochs (0/None-effective valset disables it)')
 
         # backbone
         self.parser.add_argument('--scale', default=1, type=int, help='prediction on 1/scale feature map')

@@ -10,6 +10,7 @@ import torch.backends.cudnn as cudnn
 import torch.utils.data as data
 from dataset import TotalText, Ctw1500Text, Icdar15Text, Mlt2017Text, TD500Text, TD500HUSTText, \
     ArtText, ArtTextJson, Mlt2019Text, Ctw1500Text_New, TotalText_New, Ctw1500Text_mid, TotalText_mid, TD500HUSTText_mid
+from dataset.Custom_Text_mid import CustomText_mid
 from network.textnet import TextNet
 from cfglib.config import config as cfg, update_config, print_config
 from cfglib.option import BaseOptions
@@ -207,6 +208,12 @@ def main(vis_dir_path):
     elif cfg.exp_name == "ArT" or cfg.exp_name == "ArT_mid":
         testset = ArtTextJson(
             data_root='data/ArT',
+            is_training=False,
+            transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
+        )
+    elif cfg.exp_name == "Custom_mid":
+        testset = CustomText_mid(
+            data_root='data/custom_data',
             is_training=False,
             transform=BaseTransform(size=cfg.test_size, mean=cfg.means, std=cfg.stds)
         )

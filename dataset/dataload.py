@@ -162,16 +162,16 @@ class TextDataset(object):
         h, w = img.shape[0], img.shape[1]
         mask_zeros = np.zeros(img.shape[:2], np.uint8)
 
-        train_mask = np.ones((h, w), dtype=np.float)
+        train_mask = np.ones((h, w), dtype=float)
         tr_mask = np.zeros((h, w), dtype=np.uint8)
-        weight_matrix = np.zeros((h, w), dtype=np.float)
-        direction_field = np.zeros((2, h, w), dtype=np.float)
-        distance_field = np.zeros((h, w), dtype=np.float)
+        weight_matrix = np.zeros((h, w), dtype=float)
+        direction_field = np.zeros((2, h, w), dtype=float)
+        distance_field = np.zeros((h, w), dtype=float)
         edge_field = np.zeros((h, w), dtype=np.uint8)
 
-        gt_points = np.zeros((cfg.max_annotation, cfg.num_points, 2), dtype=np.float)
-        proposal_points = np.zeros((cfg.max_annotation, cfg.num_points, 2), dtype=np.float)
-        ignore_tags = np.zeros((cfg.max_annotation,), dtype=np.int)
+        gt_points = np.zeros((cfg.max_annotation, cfg.num_points, 2), dtype=float)
+        proposal_points = np.zeros((cfg.max_annotation, cfg.num_points, 2), dtype=float)
+        ignore_tags = np.zeros((cfg.max_annotation,), dtype=int)
 
         if polygons is None:
             return train_mask, tr_mask, \
@@ -184,7 +184,7 @@ class TextDataset(object):
             polygon.points[:, 0] = np.clip(polygon.points[:, 0], 1, w - 2)
             polygon.points[:, 1] = np.clip(polygon.points[:, 1], 1, h - 2)
             gt_points[idx, :, :] = polygon.get_sample_point(size=(h, w))
-            cv2.fillPoly(tr_mask, [polygon.points.astype(np.int)], color=(idx + 1,))
+            cv2.fillPoly(tr_mask, [polygon.points.astype(int)], color=(idx + 1,))
 
             inst_mask = mask_zeros.copy()
             cv2.fillPoly(inst_mask, [polygon.points.astype(np.int32)], color=(1,))

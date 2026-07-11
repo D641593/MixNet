@@ -70,6 +70,12 @@ config.know = False
 config.knownet = "mixTriHRnet_cbam"
 config.know_resume = "./model/Totaltext_mid/TextBPN_mixTriHRnet_cbam_622.pth"
 
+# not exposed via CLI upstream, but network/textnet.py reads them --
+# must default to something or model construction raises AttributeError
+config.pos = False
+config.resume = None
+
+
 def update_config(config, extra_config):
     for k, v in vars(extra_config).items():
         config[k] = v

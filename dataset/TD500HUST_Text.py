@@ -5,7 +5,6 @@ import re
 import os
 import numpy as np
 import cv2
-import mmcv
 import math
 from util import strs
 from dataset.data_util import pil_load_img
@@ -13,6 +12,13 @@ from dataset.dataload import TextDataset, TextInstance
 from util.io import read_lines
 from util.misc import norm2
 
+
+
+def _list_from_file(path):
+    # tiny stand-in for mmcv.list_from_file -- avoids depending on
+    # mmcv just for this one helper (see apply_compat_patches.py)
+    with open(path, encoding="utf-8-sig") as f:
+        return [line.rstrip("\n").rstrip("\r") for line in f]
 
 class TD500HUSTText(TextDataset):
 
@@ -47,7 +53,7 @@ class TD500HUSTText(TextDataset):
     
     # @staticmethod
     def parse_txt(self,gt_path):
-        lines = mmcv.list_from_file(gt_path)
+        lines = _list_from_file(gt_path)
         bboxes = []
         for line in lines:
             line = line.encode('utf-8').decode('utf-8-sig')
@@ -55,11 +61,11 @@ class TD500HUSTText(TextDataset):
 
             gt = line.split(' ')
 
-            w_ = np.float(gt[4])
-            h_ = np.float(gt[5])
-            x1 = np.float(gt[2]) + w_ / 2.0
-            y1 = np.float(gt[3]) + h_ / 2.0
-            theta = np.float(gt[6]) / math.pi * 180
+            w_ = float(gt[4])
+            h_ = float(gt[5])
+            x1 = float(gt[2]) + w_ / 2.0
+            y1 = float(gt[3]) + h_ / 2.0
+            theta = float(gt[6]) / math.pi * 180
 
             bbox = cv2.boxPoints(((x1, y1), (w_, h_), theta))
             bbox = bbox.reshape(-1,2).astype(int)
@@ -129,8 +135,8 @@ if __name__ == '__main__':
         print(idx, img.shape)
         # tr_mask = (tr_mask > 0)
         ignore_tag = image_info[8]
-        gt = image_info[6][ignore_tag == 1].numpy().astype(np.int)
-        poly = image_info[7][ignore_tag == 1].numpy().astype(np.int)
+        gt = image_info[6][ignore_tag == 1].numpy().astype(int)
+        poly = image_info[7][ignore_tag == 1].numpy().astype(int)
         print(gt.shape)
         print(poly.shape)
 
